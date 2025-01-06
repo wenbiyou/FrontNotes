@@ -8,3 +8,4 @@
 ## JavaScript
 
 - [正则表达式](./web/js/正则/README.md)
+- [循环](./web/js/循环/README.md)
