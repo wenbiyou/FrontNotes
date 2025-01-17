@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>debugger</title>
+  </head>
+  <body>
+    <h1>禁止Debuger</h1>
+    <script>
+      (() => {
+        function ban() {
+          setInterval(() => {
+            debugger;
+          }, 50);
+        }
+        try {
+          ban();
+        } catch (err) {}
+      })();
+    </script>
+  </body>
+</html>

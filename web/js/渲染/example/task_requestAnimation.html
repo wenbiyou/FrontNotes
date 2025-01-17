@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS执行100万个任务</title>
+  </head>
+  <body>
+    <h1>requestAnimationFrame 实现任务分割</h1>
+    <script>
+      let bigArray = Array.from({ length: 1000000 }, (_, i) => i + 1);
+      function processChunk(chunk, initValue = 0) {
+        return chunk.reduce((acc, cur) => acc + cur, initValue);
+      }
+      let chunkSize = 1000;
+      let chunkIndex = 0;
+      let sums = 0;
+      function processArrayWithRAF() {
+        const chunk = bigArray.slice(chunkIndex, chunkIndex + chunkSize);
+        function porcessChunkWithRAF() {
+          let startTime = performance.now();
+          // 从大数组中提取一个小块
+          sums = processChunk(chunk, sums);
+          let endTime = performance.now();
+          let timeTaken = endTime - startTime;
+          if (timeTaken > 16) {
+            console.log("任务执行时间过长", timeTaken);
+            chunkSize = Math.floor(chunkSize * 0.9);
+          } else if (timeTaken < 16) {
+            chunkSize = Math.floor(chunkSize * 1.1);
+          }
+          console.log("处理中", sums);
+          chunkIndex = chunkIndex + chunkSize;
+          if (chunkIndex < bigArray.length) {
+            // 如果还有剩余的元素，继续使用 requestAnimationFrame 分割任务
+            requestAnimationFrame(porcessChunkWithRAF);
+          } else {
+            // 所有任务都处理完成
+            console.log("所有任务都处理完成", sums, chunkSize);
+          }
+        }
+        // 开始处理大数组
+        requestAnimationFrame(porcessChunkWithRAF);
+      }
+      processArrayWithRAF();
+    </script>
+  </body>
+</html>

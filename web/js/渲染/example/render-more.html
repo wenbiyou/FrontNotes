@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>一次性渲染十万条数据还能保持页面不卡顿</title>
+  </head>
+  <body>
+    <ul id="ul"></ul>
+
+    <script>
+      const total = 1000000;
+
+      let ul = document.getElementById("ul");
+
+      let once = 20;
+      let page = total / once;
+
+      function loop(curTotal) {
+        if (curTotal <= 0) return;
+        let pageCount = Math.min(curTotal, once);
+        window.requestAnimationFrame(() => {
+          let fragment = document.createDocumentFragment();
+          for (let i = 0; i < pageCount; i++) {
+            let li = document.createElement("li");
+            li.innerHTML = ~~(Math.random() * total);
+            fragment.appendChild(li);
+          }
+          ul.appendChild(fragment);
+          loop(curTotal - pageCount);
+        });
+      }
+
+      loop(total);
+
+      // 创建 PerformanceObserver 实例
+      const observer = new PerformanceObserver((list) => {
+        // 遍历性能条目列表
+        for (const entry of list.getEntries()) {
+          // console.log("Long Task Detected:", entry);
+          // 可以在这里进行长任务的处理，例如记录日志、分析性能等
+          // entry 包含长任务的详细信息，如 startTime, duration 等
+          console.log(
+            `Task started at: ${entry.startTime}, duration: ${entry.duration}`
+          );
+        }
+      });
+
+      // 开始观察 longtask 类型的性能条目
+      observer.observe({ entryTypes: ["longtask"] });
+    </script>
+  </body>
+</html>

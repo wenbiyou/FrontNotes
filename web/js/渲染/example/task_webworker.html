@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS执行100万个任务</title>
+  </head>
+  <body>
+    <h1>Web Worker</h1>
+    <script>
+      // 创建一个新的 Web Worker
+      const worker = new Worker("./worker.js");
+      // 向 Web Worker 发送消息
+      worker.postMessage({ start: 0, end: 1000000 });
+      // 监听 Web Worker 返回的消息
+      worker.onmessage = function (event) {
+        console.log("Web Worker 返回的结果:", event.data);
+      };
+    </script>
+  </body>
+</html>
